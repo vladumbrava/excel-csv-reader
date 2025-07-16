@@ -20,18 +20,23 @@ public class EmployeeController {
         employeeService.createEmployee(employee);
     }
 
+    @DeleteMapping("/delete-employee/{id}")
+    public void deleteEmployee(@PathVariable("id") Long id) {
+        employeeService.deleteEmployee(id);
+    }
+
     @GetMapping
     public List<EmployeeDTO> getAllEmployees() {
         return employeeService.getAllEmployees();
     }
 
     @PutMapping("/update-employee/{id}")
-    public void updateEmployee(@PathVariable Long id, @RequestBody Employee newEmployee) {
+    public void updateEmployee(@PathVariable("id") Long id, @RequestBody Employee newEmployee) {
         employeeService.updateEmployee(id, newEmployee);
     }
 
     @PatchMapping("/update-employee-name/{id}")
-    public void updateEmployeeName(@PathVariable Long id, @RequestBody String name) {
+    public void updateEmployeeName(@PathVariable("id") Long id, @RequestBody String name) {
         employeeService.updateEmployeeName(id, name);
     }
 
