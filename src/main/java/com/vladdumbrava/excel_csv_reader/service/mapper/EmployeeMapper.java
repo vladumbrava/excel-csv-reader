@@ -4,15 +4,11 @@ import com.vladdumbrava.excel_csv_reader.dto.EmployeeDTO;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Function;
-
 @Service
-public class EmployeeMapper implements Function<Employee, EmployeeDTO>{
+public class EmployeeMapper {
 
-    @Override
-    public EmployeeDTO apply(Employee employee) {
+    public EmployeeDTO entityToDto(Employee employee) {
         return new EmployeeDTO(
-                employee.getId(),
                 employee.getName(),
                 employee.getAge(),
                 employee.getGender(),
@@ -21,5 +17,17 @@ public class EmployeeMapper implements Function<Employee, EmployeeDTO>{
                 employee.getPhoneNumber(),
                 employee.getActive()
         );
+    }
+
+    public Employee dtoToEntity(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        employee.setName(employeeDTO.name());
+        employee.setAge(employeeDTO.age());
+        employee.setGender(employeeDTO.gender());
+        employee.setRole(employeeDTO.role());
+        employee.setEmail(employeeDTO.email());
+        employee.setPhoneNumber(employeeDTO.phoneNumber());
+        employee.setActive(employeeDTO.active());
+        return employee;
     }
 }
