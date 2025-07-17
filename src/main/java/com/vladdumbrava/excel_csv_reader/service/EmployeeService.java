@@ -28,6 +28,11 @@ public class EmployeeService {
         EmployeeFileReader reader = fileReaderFactory.getReader(file);
         List<Employee> employees = reader.read(file);
         employeeRepository.saveAll(employees);
+        log.info("\nProcessed data:\n{}",
+                employees.stream()
+                        .map(Employee::toString)
+                        .collect(Collectors.joining("\n"))
+        );
     }
 
     public void createEmployee(Employee employee) {
