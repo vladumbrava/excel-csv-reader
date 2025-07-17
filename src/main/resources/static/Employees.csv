@@ -1,6 +1,6 @@
 NAME,AGE,GENDER,ROLE,EMAIL,PHONE NUMBER,ACTIVE
-Vlad,29,MALE,Developer,vlad@example.csv123,3210712345678,TRUE
-Andreea,32,FEMALE,Designer,andreea@design.csv123,3210722334455,FALSE
-Robert,25,MALE,Tester,robert@tester.csv123,3210700111222,TRUE
-Gabriel,27,null,Tester,gabriel@tester.csv123,3210755235255,TRUE
-Ioana,32,FEMALE,Chef,ioana@chef.csv123,null,FALSE
+Vlad,29,MALE,Developer,vlad@example.com,+40749765780,TRUE
+Samuel,32, ,Designer,samuel@example.com, ,FALSE
+Emanuel,25,,Tester,emanuel@example.com,,TRUE
+Tavi,27,n/a,Tester,tavi@example.com,n/a,TRUE
+Alexandra,32,null,Manager,alexandra@example.com,null,FALSE
