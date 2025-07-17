@@ -3,10 +3,7 @@ package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.model.Gender;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,28 +43,18 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                     .filter(Objects::nonNull)
                     .map(row -> {
                         try {
-                            String name = getCellAsString(row, 0);
-                            Integer age = Integer.parseInt(getCellAsString(row, 1));
-                            String genderStr = getCellAsString(row, 2);
-                            String role = getCellAsString(row, 3);
-                            String email = getCellAsString(row, 4);
-                            String phone = getCellAsString(row, 5);
-                            String activeStr = getCellAsString(row, 6);
-
-                            Boolean active = switch (activeStr.trim().toLowerCase()) {
-                                case "true" -> true;
-                                case "false" -> false;
-                                case "", "n/a", "null" -> null;
-                                default -> {
-                                    log.warn("Invalid boolean value in row {}: '{}'", row.getRowNum(), activeStr);
-                                    yield null;
-                                }
-                            };
+                            String name = safe(getCellAsString(row, 0));
+                            Integer age = parseInteger(getCellAsString(row, 1));
+                            Gender gender = parseGender(getCellAsString(row, 2));
+                            String role = safe(getCellAsString(row, 3));
+                            String email = safe(getCellAsString(row, 4));
+                            String phone = safe(getCellAsString(row, 5));
+                            Boolean active = parseBooleanNullable(getCellAsString(row, 6));
 
                             Employee employee = new Employee();
                             employee.setName(name);
                             employee.setAge(age);
-                            employee.setGender(Gender.valueOf(genderStr.toUpperCase()));
+                            employee.setGender(gender);
                             employee.setRole(role);
                             employee.setEmail(email);
                             employee.setPhoneNumber(phone);
@@ -101,6 +88,41 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
             case BOOLEAN -> String.valueOf(cell.getBooleanCellValue()).trim();
             case BLANK -> "N/A";
             default -> "UNKNOWN";
+        };
+    }
+
+    private String safe(String s) {
+        return (s == null || s.isBlank() || s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a")) ? null : s.trim();
+    }
+
+    private Integer parseInteger(String s) {
+        try {
+            return safe(s) == null ? null : Integer.parseInt(safe(s));
+        } catch (NumberFormatException e) {
+            log.warn("Invalid integer value: {}", s);
+            return null;
+        }
+    }
+
+    private Gender parseGender(String s) {
+        try {
+            return safe(s) == null ? null : Gender.valueOf(safe(s).toUpperCase());
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid gender value: {}", s);
+            return null;
+        }
+    }
+
+    private Boolean parseBooleanNullable(String s) {
+        String trimmed = safe(s);
+        if (trimmed == null) return null;
+        return switch (trimmed.toLowerCase()) {
+            case "true" -> true;
+            case "false" -> false;
+            default -> {
+                log.warn("Invalid boolean value: {}", trimmed);
+                yield null;
+            }
         };
     }
 }
