@@ -35,9 +35,10 @@ public class EmployeeService {
         );
     }
 
-    public void createEmployee(EmployeeDTO employeeDTO) {
+    public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
         Employee employee = employeeMapper.dtoToEntity(employeeDTO);
-        employeeRepository.save(employee);
+        Employee saved = employeeRepository.save(employee);
+        return employeeMapper.entityToDto(saved);
     }
 
     public List<EmployeeDTO> getAllEmployees() {
@@ -51,9 +52,10 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    public void updateEmployee(Long id, EmployeeDTO newEmployeeDTO) {
+    public EmployeeDTO updateEmployee(Long id, EmployeeDTO newEmployeeDTO) {
         Employee newEmployee = employeeMapper.dtoToEntity(newEmployeeDTO);
-        employeeRepository.findById(id)
+
+        Employee savedEmployee = employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setName(newEmployee.getName());
                     employee.setAge(newEmployee.getAge());
@@ -65,14 +67,18 @@ public class EmployeeService {
                     return employeeRepository.save(employee);
                 })
                 .orElseGet(() -> employeeRepository.save(newEmployee));
+
+        return employeeMapper.entityToDto(savedEmployee);
     }
 
-    public void updateEmployeeName(Long id, String newName) {
-        employeeRepository.findById(id)
+    public EmployeeDTO updateEmployeeName(Long id, String newName) {
+        Employee savedEmployee = employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setName(newName);
                     return employeeRepository.save(employee);
                 })
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+
+        return employeeMapper.entityToDto(savedEmployee);
     }
 }

@@ -3,6 +3,7 @@ package com.vladdumbrava.excel_csv_reader.controller;
 import com.vladdumbrava.excel_csv_reader.dto.EmployeeDTO;
 import com.vladdumbrava.excel_csv_reader.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,28 +24,30 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public void createEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        employeeService.createEmployee(employeeDTO);
+    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        EmployeeDTO savedDto = employeeService.createEmployee(employeeDTO);
+        return new ResponseEntity<>(savedDto, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete-employee/{id}")
-    public void deleteEmployee(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long id) {
         employeeService.deleteEmployee(id);
+        return ResponseEntity.ok("Employee deleted successfully.");
     }
 
     @GetMapping
-    public List<EmployeeDTO> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeDTO>> getAllEmployees() {
+        return new ResponseEntity<>(employeeService.getAllEmployees(), HttpStatus.OK);
     }
 
     @PutMapping("/update-employee/{id}")
-    public void updateEmployee(@PathVariable("id") Long id, @RequestBody EmployeeDTO newEmployeeDTO) {
-        employeeService.updateEmployee(id, newEmployeeDTO);
+    public ResponseEntity<EmployeeDTO> updateEmployee(@PathVariable("id") Long id, @RequestBody EmployeeDTO newEmployeeDTO) {
+        return new ResponseEntity<>(employeeService.updateEmployee(id, newEmployeeDTO), HttpStatus.OK);
     }
 
     @PatchMapping("/update-employee-name/{id}")
-    public void updateEmployeeName(@PathVariable("id") Long id, @RequestBody String name) {
-        employeeService.updateEmployeeName(id, name);
+    public ResponseEntity<EmployeeDTO> updateEmployeeName(@PathVariable("id") Long id, @RequestBody String name) {
+        return new ResponseEntity<>(employeeService.updateEmployeeName(id, name), HttpStatus.OK);
     }
 
 }
