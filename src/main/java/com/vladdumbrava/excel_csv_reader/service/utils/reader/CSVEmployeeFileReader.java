@@ -9,44 +9,99 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component("csvReader")
 @Slf4j
 public class CSVEmployeeFileReader implements EmployeeFileReader{
 
-    //exception handling for case when headerlineparts is not equal to 7
-    //more exception handling
     @Override
     public List<Employee> read(MultipartFile file) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
             String headerLine = reader.readLine();
             if (headerLine == null) {
                 log.warn("CSV file is empty.");
-                return new ArrayList<>();
+                return List.of();
             }
+
             String[] headerLineParts = headerLine.split(",");
+            int expectedFields = 7;
+
+            if (headerLineParts.length != expectedFields) {
+                log.error("Header does not contain the expected number of fields: {}", expectedFields);
+                throw new IllegalArgumentException("Invalid CSV header format");
+            }
+
             return reader.lines()
+                    .map(String::trim)
+                    .filter(line -> !line.isBlank())
                     .map(line -> {
-                        String[] parts = line.split(",");
-                        if (parts.length != headerLineParts.length) {
-                            log.error("Line: {}\n does not have the proper number of fields", line);
+                        String[] parts = line.split(",", -1);
+                        if (parts.length != expectedFields) {
+                            log.warn("Skipping malformed line: {}", line);
+                            return null;
                         }
-                        Employee employee = new Employee();
-                        employee.setName(parts[0]);
-                        employee.setAge(Integer.parseInt(parts[1]));
-                        employee.setGender(Gender.valueOf(parts[2]));
-                        employee.setRole(parts[3]);
-                        employee.setEmail(parts[4]);
-                        employee.setPhoneNumber(parts[5]);
-                        employee.setActive(Boolean.valueOf(parts[6]));
-                        return employee;
+
+                        try {
+                            Employee employee = new Employee();
+                            employee.setName(safe(parts[0]));
+                            employee.setAge(parseInteger(parts[1]));
+                            employee.setGender(parseGender(parts[2]));
+                            employee.setRole(safe(parts[3]));
+                            employee.setEmail(safe(parts[4]));
+                            employee.setPhoneNumber(safe(parts[5]));
+                            employee.setActive(parseBooleanNullable(parts[6]));
+                            return employee;
+                        } catch (Exception e) {
+                            log.warn("Error parsing line: {}\n{}", line, e.getMessage());
+                            return null;
+                        }
                     })
+                    .filter(Objects::nonNull)
                     .toList();
+
         } catch (IOException e) {
-            log.error("Failed to read CSV file.");
+            log.error("Failed to read CSV file", e);
             throw new RuntimeException("Failed to read CSV file", e);
         }
     }
+
+    private String safe(String s) {
+        return (s == null || s.isBlank() || s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a")) ? null : s.trim();
+    }
+
+    private Integer parseInteger(String s) {
+        try {
+            return safe(s) == null ? null : Integer.parseInt(safe(s));
+        } catch (NumberFormatException e) {
+            log.warn("Invalid integer value: {}", s);
+            return null;
+        }
+    }
+
+    private Gender parseGender(String s) {
+        try {
+            return safe(s) == null ? null : Gender.valueOf(safe(s).toUpperCase());
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid gender value: {}", s);
+            return null;
+        }
+    }
+
+    private Boolean parseBooleanNullable(String s) {
+        String trimmed = safe(s);
+        if (trimmed == null) return null;
+        return switch (trimmed.toLowerCase()) {
+            case "true" -> true;
+            case "false" -> false;
+            default -> {
+                log.warn("Invalid boolean value: {}", trimmed);
+                yield null;
+            }
+        };
+    }
+
+
 }
