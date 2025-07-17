@@ -97,12 +97,17 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
     private Integer parseInteger(String s) {
         try {
-            return safe(s) == null ? null : Integer.parseInt(safe(s));
+            String cleaned = safe(s);
+            if (cleaned == null) return null;
+
+            double doubleVal = Double.parseDouble(cleaned);
+            return (int) doubleVal;
         } catch (NumberFormatException e) {
-            log.warn("Invalid integer value: {}", s);
+            log.warn("Invalid number for age: '{}'", s);
             return null;
         }
     }
+
 
     private Gender parseGender(String s) {
         try {
