@@ -3,7 +3,7 @@ package com.vladdumbrava.excel_csv_reader.service;
 import com.vladdumbrava.excel_csv_reader.dto.EmployeeDTO;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.repository.EmployeeRepository;
-import com.vladdumbrava.excel_csv_reader.service.dtomapper.EmployeeDTOMapper;
+import com.vladdumbrava.excel_csv_reader.service.mapper.EmployeeMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
-    private final EmployeeDTOMapper employeeDTOMapper;
+    private final EmployeeMapper employeeMapper;
 
     public void createEmployee(Employee employee) {
         employeeRepository.save(employee);
@@ -27,7 +27,7 @@ public class EmployeeService {
     public List<EmployeeDTO> getAllEmployees() {
         return employeeRepository.findAll()
                 .stream()
-                .map(employeeDTOMapper)
+                .map(employeeMapper)
                 .collect(Collectors.toList());
     }
 
