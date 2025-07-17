@@ -1,7 +1,6 @@
 package com.vladdumbrava.excel_csv_reader.controller;
 
 import com.vladdumbrava.excel_csv_reader.dto.EmployeeDTO;
-import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,8 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public void createEmployee(@RequestBody Employee employee) {
-        employeeService.createEmployee(employee);
+    public void createEmployee(@RequestBody EmployeeDTO employeeDTO) {
+        employeeService.createEmployee(employeeDTO);
     }
 
     @DeleteMapping("/delete-employee/{id}")
@@ -39,8 +38,8 @@ public class EmployeeController {
     }
 
     @PutMapping("/update-employee/{id}")
-    public void updateEmployee(@PathVariable("id") Long id, @RequestBody Employee newEmployee) {
-        employeeService.updateEmployee(id, newEmployee);
+    public void updateEmployee(@PathVariable("id") Long id, @RequestBody EmployeeDTO newEmployeeDTO) {
+        employeeService.updateEmployee(id, newEmployeeDTO);
     }
 
     @PatchMapping("/update-employee-name/{id}")

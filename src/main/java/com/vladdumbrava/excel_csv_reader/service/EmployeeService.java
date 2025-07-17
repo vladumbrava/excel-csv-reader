@@ -35,14 +35,15 @@ public class EmployeeService {
         );
     }
 
-    public void createEmployee(Employee employee) {
+    public void createEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = employeeMapper.dtoToEntity(employeeDTO);
         employeeRepository.save(employee);
     }
 
     public List<EmployeeDTO> getAllEmployees() {
         return employeeRepository.findAll()
                 .stream()
-                .map(employeeMapper)
+                .map(employeeMapper::entityToDto)
                 .collect(Collectors.toList());
     }
 
@@ -50,7 +51,8 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    public void updateEmployee(Long id, Employee newEmployee) {
+    public void updateEmployee(Long id, EmployeeDTO newEmployeeDTO) {
+        Employee newEmployee = employeeMapper.dtoToEntity(newEmployeeDTO);
         employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setName(newEmployee.getName());
