@@ -30,7 +30,7 @@ public class EmployeeService {
         employeeRepository.saveAll(employees);
         log.info("\nProcessed data:\n{}",
                 employees.stream()
-                        .map(Employee::toString)
+                        .map(employee -> employeeMapper.entityToDto(employee).toString())
                         .collect(Collectors.joining("\n"))
         );
     }
