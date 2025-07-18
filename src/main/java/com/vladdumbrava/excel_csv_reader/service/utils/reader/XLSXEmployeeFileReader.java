@@ -1,5 +1,6 @@
 package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 
+import com.vladdumbrava.excel_csv_reader.exception.FileProcessingException;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.model.Gender;
 import lombok.extern.slf4j.Slf4j;
@@ -25,14 +26,14 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
             Sheet sheet = workbook.getSheetAt(0);
             if (sheet == null) {
-                log.warn("No sheet found in Excel file.");
-                return List.of();
+                log.error("No sheet found in Excel file.");
+                throw new FileProcessingException("No sheet found in Excel file.");
             }
 
             Row headerRow = sheet.getRow(0);
             if (headerRow == null) {
-                log.warn("Excel file has no header row.");
-                return List.of();
+                log.error("Excel file has no header row.");
+                throw new FileProcessingException("Excel file is missing header row.");
             }
 
             int totalRows = sheet.getLastRowNum();
@@ -64,11 +65,10 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                             return employee;
 
                         } catch (Exception e) {
-                            log.warn("Failed to parse row {}: {}", row.getRowNum(), e.getMessage());
-                            return null;
+                            log.error("Failed to parse row {}: {}", row.getRowNum(), e.getMessage());
+                            throw new FileProcessingException("Failed to parse Excel row " + row.getRowNum() + ": " + e.getMessage());
                         }
                     })
-                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             log.info("Successfully read {} employee records from Excel file.", employees.size());
@@ -76,7 +76,9 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
         } catch (IOException e) {
             log.error("Error reading Excel file: {}", file.getOriginalFilename(), e);
-            return List.of();
+            throw new FileProcessingException("Failed to read Excel file: " + file.getOriginalFilename());
+        } catch (Exception e) {
+            throw new FileProcessingException("Unexpected error while processing Excel file.");
         }
     }
 

@@ -1,5 +1,6 @@
 package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 
+import com.vladdumbrava.excel_csv_reader.exception.FileProcessingException;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.model.Gender;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,8 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
 
             String headerLine = reader.readLine();
             if (headerLine == null) {
-                log.warn("CSV file is empty.");
-                return List.of();
+                log.error("CSV file is empty.");
+                throw new FileProcessingException("CSV file is empty.");
             }
 
             String[] headerLineParts = headerLine.split(",");
@@ -31,7 +32,7 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
 
             if (headerLineParts.length != expectedFields) {
                 log.error("Header does not contain the expected number of fields: {}", expectedFields);
-                throw new IllegalArgumentException("Invalid CSV header format");
+                throw new FileProcessingException("Invalid CSV header format.");
             }
 
             return reader.lines()
@@ -55,8 +56,8 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
                             employee.setActive(parseBooleanNullable(parts[6]));
                             return employee;
                         } catch (Exception e) {
-                            log.warn("Error parsing line: {}\n{}", line, e.getMessage());
-                            return null;
+                            log.error("Error parsing line: {}\n{}", line, e.getMessage());
+                            throw new FileProcessingException("Failed to parse CSV line: " + line + "\n" + e.getMessage());
                         }
                     })
                     .filter(Objects::nonNull)
@@ -64,7 +65,9 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
 
         } catch (IOException e) {
             log.error("Failed to read CSV file", e);
-            throw new RuntimeException("Failed to read CSV file", e);
+            throw new FileProcessingException("Failed to read CSV file");
+        } catch (Exception e) {
+            throw new FileProcessingException("Unexpected error while processing CSV file");
         }
     }
 

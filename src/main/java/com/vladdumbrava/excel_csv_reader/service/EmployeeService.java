@@ -1,12 +1,12 @@
 package com.vladdumbrava.excel_csv_reader.service;
 
 import com.vladdumbrava.excel_csv_reader.dto.EmployeeDTO;
+import com.vladdumbrava.excel_csv_reader.exception.ResourceNotFoundException;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.repository.EmployeeRepository;
 import com.vladdumbrava.excel_csv_reader.service.mapper.EmployeeMapper;
 import com.vladdumbrava.excel_csv_reader.service.utils.FileReaderFactory;
 import com.vladdumbrava.excel_csv_reader.service.utils.reader.EmployeeFileReader;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -77,7 +77,7 @@ public class EmployeeService {
                     employee.setName(newName);
                     return employeeRepository.save(employee);
                 })
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
 
         return employeeMapper.entityToDto(savedEmployee);
     }

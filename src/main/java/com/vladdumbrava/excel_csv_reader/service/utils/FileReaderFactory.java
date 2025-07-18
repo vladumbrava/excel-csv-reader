@@ -1,5 +1,6 @@
 package com.vladdumbrava.excel_csv_reader.service.utils;
 
+import com.vladdumbrava.excel_csv_reader.exception.ReaderNotFoundException;
 import com.vladdumbrava.excel_csv_reader.service.utils.reader.CSVEmployeeFileReader;
 import com.vladdumbrava.excel_csv_reader.service.utils.reader.EmployeeFileReader;
 import com.vladdumbrava.excel_csv_reader.service.utils.reader.XLSXEmployeeFileReader;
@@ -39,7 +40,7 @@ public class FileReaderFactory {
         return list.stream()
                 .filter(clazz::isInstance)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Reader not found for class: " + clazz));
+                .orElseThrow(() -> new ReaderNotFoundException("Reader not found for class: " + clazz));
     }
 }
 
