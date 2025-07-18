@@ -20,6 +20,7 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
     @Override
     public List<Employee> read(MultipartFile file) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            log.info("Starting to parse CSV file: {}", file.getOriginalFilename());
 
             String headerLine = reader.readLine();
             if (headerLine == null) {
@@ -31,7 +32,8 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
             int expectedFields = 7;
 
             if (headerLineParts.length != expectedFields) {
-                log.error("Header does not contain the expected number of fields: {}", expectedFields);
+                log.error("CSV header is malformed. Expected {} fields, but got {}: {}",
+                        expectedFields, headerLineParts.length, headerLine);
                 throw new FileProcessingException("Invalid CSV header format.");
             }
 

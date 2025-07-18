@@ -26,8 +26,10 @@ public class EmployeeService {
 
     public void importEmployees(MultipartFile file) {
         EmployeeFileReader reader = fileReaderFactory.getReader(file);
+        log.info("FileReaderFactory chose implementation for reader.");
         List<Employee> employees = reader.read(file);
         employeeRepository.saveAll(employees);
+        log.info("Saved employees in repository.");
         log.info("\nProcessed data:\n{}",
                 employees.stream()
                         .map(employee -> employeeMapper.entityToDto(employee).toString())
@@ -38,6 +40,7 @@ public class EmployeeService {
     public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
         Employee employee = employeeMapper.dtoToEntity(employeeDTO);
         Employee saved = employeeRepository.save(employee);
+        log.info("Saved employee in repository.");
         return employeeMapper.entityToDto(saved);
     }
 
@@ -64,6 +67,7 @@ public class EmployeeService {
                     employee.setEmail(newEmployee.getEmail());
                     employee.setPhoneNumber(newEmployee.getPhoneNumber());
                     employee.setActive(newEmployee.getActive());
+                    log.info("Updated employee.");
                     return employeeRepository.save(employee);
                 })
                 .orElseGet(() -> employeeRepository.save(newEmployee));
@@ -75,6 +79,7 @@ public class EmployeeService {
         Employee savedEmployee = employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setName(newName);
+                    log.info("Updated employee's name.");
                     return employeeRepository.save(employee);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
