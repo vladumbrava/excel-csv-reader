@@ -69,7 +69,9 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
     }
 
     private String safe(String s) {
-        return (s == null || s.isBlank() || s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a")) ? null : s.trim();
+        return (s == null || s.isBlank() || s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
+                ? null
+                : s.trim();
     }
 
     private Integer parseInteger(String s) {
