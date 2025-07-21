@@ -44,12 +44,12 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                     .filter(Objects::nonNull)
                     .map(row -> {
                         try {
-                            String name = safe(getCellAsString(row, 0));
+                            String name = handleNullityInString(getCellAsString(row, 0));
                             Integer age = parseInteger(getCellAsString(row, 1));
                             Gender gender = parseGender(getCellAsString(row, 2));
-                            String role = safe(getCellAsString(row, 3));
-                            String email = safe(getCellAsString(row, 4));
-                            String phone = safe(getCellAsString(row, 5));
+                            String role = handleNullityInString(getCellAsString(row, 3));
+                            String email = handleNullityInString(getCellAsString(row, 4));
+                            String phone = handleNullityInString(getCellAsString(row, 5));
                             Boolean active = parseBooleanNullable(getCellAsString(row, 6));
 
                             Employee employee = new Employee();
@@ -94,7 +94,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
         };
     }
 
-    private String safe(String s) {
+    private String handleNullityInString(String s) {
         return (s == null || s.isBlank() || s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
                 ? null
                 : s.trim();
@@ -102,7 +102,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
     private Integer parseInteger(String s) {
         try {
-            String cleaned = safe(s);
+            String cleaned = handleNullityInString(s);
             if (cleaned == null) return null;
 
             double doubleVal = Double.parseDouble(cleaned);
@@ -116,7 +116,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
     private Gender parseGender(String s) {
         try {
-            return safe(s) == null ? null : Gender.valueOf(safe(s).toUpperCase());
+            return handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase());
         } catch (IllegalArgumentException e) {
             log.warn("Invalid gender value: {}", s);
             return null;
@@ -124,7 +124,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
     }
 
     private Boolean parseBooleanNullable(String s) {
-        String trimmed = safe(s);
+        String trimmed = handleNullityInString(s);
         if (trimmed == null) return null;
         return switch (trimmed.toLowerCase()) {
             case "true" -> true;
