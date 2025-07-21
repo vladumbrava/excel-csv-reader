@@ -1,15 +1,16 @@
 package com.vladdumbrava.excel_csv_reader.service.utils;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.vladdumbrava.excel_csv_reader.exception.ReaderNotFoundException;
 import com.vladdumbrava.excel_csv_reader.service.utils.reader.CSVEmployeeFileReader;
 import com.vladdumbrava.excel_csv_reader.service.utils.reader.EmployeeFileReader;
 import com.vladdumbrava.excel_csv_reader.service.utils.reader.XLSXEmployeeFileReader;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Component
 public class FileReaderFactory {

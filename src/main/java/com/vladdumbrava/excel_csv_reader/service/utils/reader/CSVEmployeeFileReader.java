@@ -1,17 +1,18 @@
 package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 
-import com.vladdumbrava.excel_csv_reader.exception.FileProcessingException;
-import com.vladdumbrava.excel_csv_reader.model.Employee;
-import com.vladdumbrava.excel_csv_reader.model.Gender;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Objects;
+
+import com.vladdumbrava.excel_csv_reader.exception.FileProcessingException;
+import com.vladdumbrava.excel_csv_reader.model.Employee;
+import com.vladdumbrava.excel_csv_reader.model.Gender;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 @Component("csvReader")
 @Slf4j
@@ -110,6 +111,4 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
             }
         };
     }
-
-
 }
