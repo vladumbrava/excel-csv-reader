@@ -89,7 +89,7 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
 
     private LocalDate parseDate(String s) {
         try {
-            return handleNullityInString(s) == null ? null : LocalDate.parse(handleNullityInString(s));
+            return (handleNullityInString(s) == null ? null : LocalDate.parse(handleNullityInString(s)));
         } catch (DateTimeParseException e) {
             log.warn("Invalid date format: {}", s);
             return null;
