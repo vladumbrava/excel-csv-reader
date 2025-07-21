@@ -1,6 +1,8 @@
 package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -47,7 +49,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                     .map(row -> {
                         try {
                             String name = handleNullityInString(getCellAsString(row, 0));
-                            Integer age = parseInteger(getCellAsString(row, 1));
+                            LocalDate dateOfBirth = parseDate(getCellAsString(row, 1));
                             Gender gender = parseGender(getCellAsString(row, 2));
                             String role = handleNullityInString(getCellAsString(row, 3));
                             String email = handleNullityInString(getCellAsString(row, 4));
@@ -56,7 +58,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
                             Employee employee = new Employee();
                             employee.setName(name);
-                            employee.setAge(age);
+                            employee.setDateOfBirth(dateOfBirth);
                             employee.setGender(gender);
                             employee.setRole(role);
                             employee.setEmail(email);
@@ -106,20 +108,14 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                 : s.trim());
     }
 
-    private Integer parseInteger(String s) {
+    private LocalDate parseDate(String s) {
         try {
-            String cleaned = handleNullityInString(s);
-            if (cleaned == null) return null;
-
-            double doubleVal = Double.parseDouble(cleaned);
-            return (int) doubleVal;
-        }
-        catch (NumberFormatException e) {
-            log.warn("Invalid number for age: '{}'", s);
+            return handleNullityInString(s) == null ? null : LocalDate.parse(handleNullityInString(s));
+        } catch (DateTimeParseException e) {
+            log.warn("Invalid date format: {}", s);
             return null;
         }
     }
-
 
     private Gender parseGender(String s) {
         try {

@@ -1,5 +1,7 @@
 package com.vladdumbrava.excel_csv_reader.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 import lombok.Data;
@@ -17,8 +19,8 @@ public class Employee {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "age")
-    private Integer age;
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
     @Column(name = "gender")
     @Enumerated(EnumType.STRING)

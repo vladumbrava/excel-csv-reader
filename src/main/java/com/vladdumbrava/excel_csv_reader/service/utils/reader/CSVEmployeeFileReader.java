@@ -3,6 +3,8 @@ package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,7 +53,7 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
                         try {
                             Employee employee = new Employee();
                             employee.setName(handleNullityInString(parts[0]));
-                            employee.setAge(parseInteger(parts[1]));
+                            employee.setDateOfBirth(parseDate(parts[1]));
                             employee.setGender(parseGender(parts[2]));
                             employee.setRole(handleNullityInString(parts[3]));
                             employee.setEmail(handleNullityInString(parts[4]));
@@ -85,12 +87,11 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
                 : s.trim());
     }
 
-    private Integer parseInteger(String s) {
+    private LocalDate parseDate(String s) {
         try {
-            return (handleNullityInString(s) == null ? null : Integer.parseInt(handleNullityInString(s)));
-        }
-        catch (NumberFormatException e) {
-            log.warn("Invalid integer value: {}", s);
+            return handleNullityInString(s) == null ? null : LocalDate.parse(handleNullityInString(s));
+        } catch (DateTimeParseException e) {
+            log.warn("Invalid date format: {}", s);
             return null;
         }
     }

@@ -11,7 +11,7 @@ public class EmployeeMapper {
     public EmployeeDTO entityToDto(Employee employee) {
         return new EmployeeDTO(
                 employee.getName(),
-                employee.getAge(),
+                employee.getDateOfBirth(),
                 employee.getGender(),
                 employee.getRole(),
                 employee.getEmail(),
@@ -23,7 +23,7 @@ public class EmployeeMapper {
     public Employee dtoToEntity(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         employee.setName(employeeDTO.name());
-        employee.setAge(employeeDTO.age());
+        employee.setDateOfBirth(employeeDTO.dateOfBirth());
         employee.setGender(employeeDTO.gender());
         employee.setRole(employeeDTO.role());
         employee.setEmail(employeeDTO.email());

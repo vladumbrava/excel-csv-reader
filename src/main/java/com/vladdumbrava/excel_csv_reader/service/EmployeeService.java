@@ -62,7 +62,7 @@ public class EmployeeService {
         Employee savedEmployee = employeeRepository.findById(id)
                 .map(employee -> {
                     employee.setName(newEmployee.getName());
-                    employee.setAge(newEmployee.getAge());
+                    employee.setDateOfBirth(newEmployee.getDateOfBirth());
                     employee.setGender(newEmployee.getGender());
                     employee.setRole(newEmployee.getRole());
                     employee.setEmail(newEmployee.getEmail());
