@@ -100,10 +100,10 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
     }
 
     private String handleNullityInString(String s) {
-        return (s == null || s.isBlank() ||
+        return ((s == null || s.isBlank() ||
                 s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
                 ? null
-                : s.trim();
+                : s.trim());
     }
 
     private Integer parseInteger(String s) {
@@ -123,7 +123,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
     private Gender parseGender(String s) {
         try {
-            return handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase());
+            return (handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase()));
         }
         catch (IllegalArgumentException e) {
             log.warn("Invalid gender value: {}", s);

@@ -79,15 +79,15 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
     }
 
     private String handleNullityInString(String s) {
-        return (s == null || s.isBlank() ||
+        return ((s == null || s.isBlank() ||
                 s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
                 ? null
-                : s.trim();
+                : s.trim());
     }
 
     private Integer parseInteger(String s) {
         try {
-            return handleNullityInString(s) == null ? null : Integer.parseInt(handleNullityInString(s));
+            return (handleNullityInString(s) == null ? null : Integer.parseInt(handleNullityInString(s)));
         }
         catch (NumberFormatException e) {
             log.warn("Invalid integer value: {}", s);
@@ -97,7 +97,7 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
 
     private Gender parseGender(String s) {
         try {
-            return handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase());
+            return (handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase()));
         }
         catch (IllegalArgumentException e) {
             log.warn("Invalid gender value: {}", s);
