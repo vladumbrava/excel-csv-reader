@@ -58,7 +58,8 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
                             employee.setPhoneNumber(handleNullityInString(parts[5]));
                             employee.setActive(parseBooleanNullable(parts[6]));
                             return employee;
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             log.error("Error parsing line: {}\n{}", line, e.getMessage());
                             throw new FileProcessingException("Failed to parse CSV line: " + line + "\n" + e.getMessage());
                         }
@@ -66,17 +67,20 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
                     .filter(Objects::nonNull)
                     .toList();
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("Failed to read CSV file", e);
             throw new FileProcessingException("Failed to read CSV file");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("Unexpected error while processing CSV file");
             throw new FileProcessingException("Unexpected error while processing CSV file");
         }
     }
 
     private String handleNullityInString(String s) {
-        return (s == null || s.isBlank() || s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
+        return (s == null || s.isBlank() ||
+                s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
                 ? null
                 : s.trim();
     }
@@ -84,7 +88,8 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
     private Integer parseInteger(String s) {
         try {
             return handleNullityInString(s) == null ? null : Integer.parseInt(handleNullityInString(s));
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             log.warn("Invalid integer value: {}", s);
             return null;
         }
@@ -93,7 +98,8 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
     private Gender parseGender(String s) {
         try {
             return handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase());
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             log.warn("Invalid gender value: {}", s);
             return null;
         }

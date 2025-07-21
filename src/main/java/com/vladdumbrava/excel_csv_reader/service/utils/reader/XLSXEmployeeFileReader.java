@@ -66,7 +66,8 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                             log.info("Parsed employee from row {}: {}", row.getRowNum(), employee);
                             return employee;
 
-                        } catch (Exception e) {
+                        }
+                        catch (Exception e) {
                             log.error("Failed to parse row {}: {}", row.getRowNum(), e.getMessage());
                             throw new FileProcessingException("Failed to parse Excel row " + row.getRowNum() + ": " + e.getMessage());
                         }
@@ -76,10 +77,12 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
             log.info("Successfully read {} employee records from Excel file.", employees.size());
             return employees;
 
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("Error reading Excel file: {}", file.getOriginalFilename(), e);
             throw new FileProcessingException("Failed to read Excel file: " + file.getOriginalFilename());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("Unexpected error while processing Excel file.");
             throw new FileProcessingException("Unexpected error while processing Excel file.");
         }
@@ -97,7 +100,8 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
     }
 
     private String handleNullityInString(String s) {
-        return (s == null || s.isBlank() || s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
+        return (s == null || s.isBlank() ||
+                s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
                 ? null
                 : s.trim();
     }
@@ -109,7 +113,8 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
 
             double doubleVal = Double.parseDouble(cleaned);
             return (int) doubleVal;
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             log.warn("Invalid number for age: '{}'", s);
             return null;
         }
@@ -119,7 +124,8 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
     private Gender parseGender(String s) {
         try {
             return handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase());
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             log.warn("Invalid gender value: {}", s);
             return null;
         }
