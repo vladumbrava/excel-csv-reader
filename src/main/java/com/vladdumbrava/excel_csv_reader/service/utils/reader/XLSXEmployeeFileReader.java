@@ -85,8 +85,11 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
             throw new FileProcessingException("Failed to read Excel file: " + file.getOriginalFilename());
         }
         catch (Exception e) {
-            log.error("Unexpected error while processing Excel file.");
-            throw new FileProcessingException("Unexpected error while processing Excel file.");
+            if (e instanceof FileProcessingException) {
+                throw e;
+            }
+            log.error("Unexpected error while processing Excel file", e);
+            throw new FileProcessingException("Unexpected error while processing Excel file");
         }
     }
 

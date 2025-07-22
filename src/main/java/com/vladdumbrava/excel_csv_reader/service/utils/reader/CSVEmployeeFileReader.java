@@ -75,7 +75,10 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
             throw new FileProcessingException("Failed to read CSV file");
         }
         catch (Exception e) {
-            log.error("Unexpected error while processing CSV file");
+            if (e instanceof FileProcessingException) {
+                throw e;
+            }
+            log.error("Unexpected error while processing CSV file", e);
             throw new FileProcessingException("Unexpected error while processing CSV file");
         }
     }
