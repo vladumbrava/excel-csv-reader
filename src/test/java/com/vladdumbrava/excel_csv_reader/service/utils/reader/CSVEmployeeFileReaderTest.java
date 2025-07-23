@@ -9,6 +9,7 @@ import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.model.Gender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class CSVEmployeeFileReaderTest {
 
+    @Mock
     private CSVEmployeeFileReader reader;
 
     @BeforeEach

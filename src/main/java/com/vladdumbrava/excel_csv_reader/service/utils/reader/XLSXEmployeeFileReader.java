@@ -2,7 +2,6 @@ package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -12,11 +11,16 @@ import com.vladdumbrava.excel_csv_reader.exception.FileProcessingException;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.model.Gender;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.vladdumbrava.excel_csv_reader.service.utils.DataTypeParser.*;
 
 
 @Component("xlsxReader")
@@ -54,7 +58,7 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                             String role = handleNullityInString(getCellAsString(row, 3));
                             String email = handleNullityInString(getCellAsString(row, 4));
                             String phone = handleNullityInString(getCellAsString(row, 5));
-                            Boolean active = parseBooleanNullable(getCellAsString(row, 6));
+                            Boolean active = parseBoolean(getCellAsString(row, 6));
 
                             Employee employee = new Employee();
                             employee.setName(name);
@@ -104,42 +108,4 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
         };
     }
 
-    private String handleNullityInString(String s) {
-        return ((s == null || s.isBlank() ||
-                s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
-                ? null
-                : s.trim());
-    }
-
-    private LocalDate parseDate(String s) {
-        try {
-            return (handleNullityInString(s) == null ? null : LocalDate.parse(handleNullityInString(s)));
-        } catch (DateTimeParseException e) {
-            log.warn("Invalid date format: {}", s);
-            return null;
-        }
-    }
-
-    private Gender parseGender(String s) {
-        try {
-            return (handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase()));
-        }
-        catch (IllegalArgumentException e) {
-            log.warn("Invalid gender value: {}", s);
-            return null;
-        }
-    }
-
-    private Boolean parseBooleanNullable(String s) {
-        String trimmed = handleNullityInString(s);
-        if (trimmed == null) return null;
-        return switch (trimmed.toLowerCase()) {
-            case "true" -> true;
-            case "false" -> false;
-            default -> {
-                log.warn("Invalid boolean value: {}", trimmed);
-                yield null;
-            }
-        };
-    }
 }

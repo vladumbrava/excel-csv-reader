@@ -3,18 +3,17 @@ package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Objects;
 
 import com.vladdumbrava.excel_csv_reader.exception.FileProcessingException;
 import com.vladdumbrava.excel_csv_reader.model.Employee;
-import com.vladdumbrava.excel_csv_reader.model.Gender;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import static com.vladdumbrava.excel_csv_reader.service.utils.DataTypeParser.*;
 
 @Component("csvReader")
 @Slf4j
@@ -58,7 +57,7 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
                             employee.setRole(handleNullityInString(parts[3]));
                             employee.setEmail(handleNullityInString(parts[4]));
                             employee.setPhoneNumber(handleNullityInString(parts[5]));
-                            employee.setActive(parseBooleanNullable(parts[6]));
+                            employee.setActive(parseBoolean(parts[6]));
                             return employee;
                         }
                         catch (Exception e) {
@@ -83,42 +82,4 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
         }
     }
 
-    private String handleNullityInString(String s) {
-        return ((s == null || s.isBlank() ||
-                s.equalsIgnoreCase("null") || s.equalsIgnoreCase("n/a"))
-                ? null
-                : s.trim());
-    }
-
-    private LocalDate parseDate(String s) {
-        try {
-            return (handleNullityInString(s) == null ? null : LocalDate.parse(handleNullityInString(s)));
-        } catch (DateTimeParseException e) {
-            log.warn("Invalid date format: {}", s);
-            return null;
-        }
-    }
-
-    private Gender parseGender(String s) {
-        try {
-            return (handleNullityInString(s) == null ? null : Gender.valueOf(handleNullityInString(s).toUpperCase()));
-        }
-        catch (IllegalArgumentException e) {
-            log.warn("Invalid gender value: {}", s);
-            return null;
-        }
-    }
-
-    private Boolean parseBooleanNullable(String s) {
-        String trimmed = handleNullityInString(s);
-        if (trimmed == null) return null;
-        return switch (trimmed.toLowerCase()) {
-            case "true" -> true;
-            case "false" -> false;
-            default -> {
-                log.warn("Invalid boolean value: {}", trimmed);
-                yield null;
-            }
-        };
-    }
 }
