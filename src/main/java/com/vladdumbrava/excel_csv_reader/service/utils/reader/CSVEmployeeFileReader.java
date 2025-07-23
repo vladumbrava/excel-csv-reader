@@ -48,22 +48,15 @@ public class CSVEmployeeFileReader implements EmployeeFileReader{
                             log.warn("Skipping malformed line: {}", line);
                             return null;
                         }
-
-                        try {
-                            Employee employee = new Employee();
-                            employee.setName(handleNullityInString(parts[0]));
-                            employee.setDateOfBirth(parseDate(parts[1]));
-                            employee.setGender(parseGender(parts[2]));
-                            employee.setRole(handleNullityInString(parts[3]));
-                            employee.setEmail(handleNullityInString(parts[4]));
-                            employee.setPhoneNumber(handleNullityInString(parts[5]));
-                            employee.setActive(parseBoolean(parts[6]));
-                            return employee;
-                        }
-                        catch (Exception e) {
-                            log.error("Error parsing line: {}\n{}", line, e.getMessage());
-                            throw new FileProcessingException("Failed to parse CSV line: " + line + "\n" + e.getMessage());
-                        }
+                        Employee employee = new Employee();
+                        employee.setName(handleNullityInString(parts[0]));
+                        employee.setDateOfBirth(parseDate(parts[1]));
+                        employee.setGender(parseGender(parts[2]));
+                        employee.setRole(handleNullityInString(parts[3]));
+                        employee.setEmail(handleNullityInString(parts[4]));
+                        employee.setPhoneNumber(handleNullityInString(parts[5]));
+                        employee.setActive(parseBoolean(parts[6]));
+                        return employee;
                     })
                     .filter(Objects::nonNull)
                     .toList();

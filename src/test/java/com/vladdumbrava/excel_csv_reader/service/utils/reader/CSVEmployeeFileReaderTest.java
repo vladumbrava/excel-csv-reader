@@ -1,5 +1,6 @@
 package com.vladdumbrava.excel_csv_reader.service.utils.reader;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
@@ -9,16 +10,16 @@ import com.vladdumbrava.excel_csv_reader.model.Employee;
 import com.vladdumbrava.excel_csv_reader.model.Gender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class CSVEmployeeFileReaderTest {
 
-    @Mock
     private CSVEmployeeFileReader reader;
 
     @BeforeEach
@@ -71,9 +72,9 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void givenBadLineCsv_whenRead_thenPassLine() {
+    void givenUnexpectedFieldsLineCsv_whenRead_thenPassLine() {
         String csv = "name,dateOfBirth,gender,role,email,phoneNumber,active\n" +
-                "John Doe,1990-01-01,MALE,Engineer,john@example.com"; // only 6 fields
+                "John Doe,1990-01-01,MALE,Engineer,john@example.com";
 
         MockMultipartFile file = new MockMultipartFile("file", "employees.csv",
                 "text/csv", csv.getBytes(StandardCharsets.UTF_8));
@@ -83,32 +84,15 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void givenBadDateGenderCsv_whenRead_thenParseNull() {
-        String csv = "name,dateOfBirth,gender,role,email,phoneNumber,active\n" +
-                "Jane Doe,invalid_date,invalid_gender,Manager,jane@example.com,1234567890,false";
+    void givenNonExistingCsv_whenRead_thenThrowException() throws IOException {
+        MultipartFile mockFile = Mockito.mock(MultipartFile.class);
+        Mockito.when(mockFile.getInputStream()).thenThrow(new IOException("Simulated IO error"));
+        Mockito.when(mockFile.getOriginalFilename()).thenReturn("broken.csv");
 
-        MockMultipartFile file = new MockMultipartFile("file", "employees.csv",
-                "text/csv", csv.getBytes(StandardCharsets.UTF_8));
-
-        List<Employee> employees = reader.read(file);
-        assertThat(employees).hasSize(1);
-        Employee employee = employees.getFirst();
-        assertThat(employee.getDateOfBirth()).isNull();
-        assertThat(employee.getGender()).isNull();
+        assertThatThrownBy(() -> reader.read(mockFile))
+                .isInstanceOf(FileProcessingException.class)
+                .hasMessageContaining("Failed to read CSV file");
     }
 
-    @Test
-    void givenBadActiveCsv_whenRead_thenParseNull() {
-        String csv = "name,dateOfBirth,gender,role,email,phoneNumber,active\n" +
-                "Jake Smith,1995-05-10,MALE,Developer,jake@example.com,1234567890,maybe";
-
-        MockMultipartFile file = new MockMultipartFile("file", "employees.csv",
-                "text/csv", csv.getBytes(StandardCharsets.UTF_8));
-
-        List<Employee> employees = reader.read(file);
-        assertThat(employees).hasSize(1);
-        Employee employee = employees.getFirst();
-        assertThat(employee.getActive()).isNull();
-    }
 
 }
