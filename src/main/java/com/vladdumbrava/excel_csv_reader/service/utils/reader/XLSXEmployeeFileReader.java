@@ -51,32 +51,25 @@ public class XLSXEmployeeFileReader implements EmployeeFileReader {
                     .mapToObj(sheet::getRow)
                     .filter(Objects::nonNull)
                     .map(row -> {
-                        try {
-                            String name = handleNullityInString(getCellAsString(row, 0));
-                            LocalDate dateOfBirth = parseDate(getCellAsString(row, 1));
-                            Gender gender = parseGender(getCellAsString(row, 2));
-                            String role = handleNullityInString(getCellAsString(row, 3));
-                            String email = handleNullityInString(getCellAsString(row, 4));
-                            String phone = handleNullityInString(getCellAsString(row, 5));
-                            Boolean active = parseBoolean(getCellAsString(row, 6));
+                        String name = handleNullityInString(getCellAsString(row, 0));
+                        LocalDate dateOfBirth = parseDate(getCellAsString(row, 1));
+                        Gender gender = parseGender(getCellAsString(row, 2));
+                        String role = handleNullityInString(getCellAsString(row, 3));
+                        String email = handleNullityInString(getCellAsString(row, 4));
+                        String phone = handleNullityInString(getCellAsString(row, 5));
+                        Boolean active = parseBoolean(getCellAsString(row, 6));
 
-                            Employee employee = new Employee();
-                            employee.setName(name);
-                            employee.setDateOfBirth(dateOfBirth);
-                            employee.setGender(gender);
-                            employee.setRole(role);
-                            employee.setEmail(email);
-                            employee.setPhoneNumber(phone);
-                            employee.setActive(active);
+                        Employee employee = new Employee();
+                        employee.setName(name);
+                        employee.setDateOfBirth(dateOfBirth);
+                        employee.setGender(gender);
+                        employee.setRole(role);
+                        employee.setEmail(email);
+                        employee.setPhoneNumber(phone);
+                        employee.setActive(active);
 
-                            log.info("Parsed employee from row {}: {}", row.getRowNum(), employee);
-                            return employee;
-
-                        }
-                        catch (Exception e) {
-                            log.error("Failed to parse row {}: {}", row.getRowNum(), e.getMessage());
-                            throw new FileProcessingException("Failed to parse Excel row " + row.getRowNum() + ": " + e.getMessage());
-                        }
+                        log.info("Parsed employee from row {}: {}", row.getRowNum(), employee);
+                        return employee;
                     })
                     .collect(Collectors.toList());
 

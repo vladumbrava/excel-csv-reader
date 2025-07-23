@@ -70,5 +70,4 @@ public class XLSXEmployeeFileReaderTest {
                 .hasMessageContaining("Failed to read Excel file");
     }
 
-
 }
