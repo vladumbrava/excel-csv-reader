@@ -71,7 +71,7 @@ public class EmployeeService {
                     log.info("Updated employee.");
                     return employeeRepository.save(employee);
                 })
-                .orElseGet(() -> employeeRepository.save(newEmployee));
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
 
         return employeeMapper.entityToDto(savedEmployee);
     }

@@ -25,7 +25,7 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void testReadValidCsv() {
+    void givenValidCsv_whenRead_thenParseToEmployees() {
         String csv = "name,dateOfBirth,gender,role,email,phoneNumber,active\n" +
                 "John Doe,1990-01-01,MALE,Engineer,john@example.com,1234567890,true";
 
@@ -46,7 +46,7 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void testReadCsvWithEmptyFile() {
+    void givenEmptyCsv_whenRead_thenThrowException() {
         MockMultipartFile file = new MockMultipartFile("file", "employees.csv",
                 "text/csv", new byte[0]);
 
@@ -56,7 +56,7 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void testReadCsvWithMalformedHeader() {
+    void givenBadHeaderCsv_whenRead_thenThrowException() {
         String csv = "name,dateOfBirth,gender\n" +
                 "John Doe,1990-01-01,MALE";
 
@@ -69,7 +69,7 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void testReadCsvWithMalformedLine() {
+    void givenBadLineCsv_whenRead_thenPassLine() {
         String csv = "name,dateOfBirth,gender,role,email,phoneNumber,active\n" +
                 "John Doe,1990-01-01,MALE,Engineer,john@example.com"; // only 6 fields
 
@@ -81,7 +81,7 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void testReadCsvWithInvalidDateAndGender() {
+    void givenBadDateGenderCsv_whenRead_thenParseNull() {
         String csv = "name,dateOfBirth,gender,role,email,phoneNumber,active\n" +
                 "Jane Doe,invalid_date,invalid_gender,Manager,jane@example.com,1234567890,false";
 
@@ -96,7 +96,7 @@ public class CSVEmployeeFileReaderTest {
     }
 
     @Test
-    void testReadCsvWithInvalidBoolean() {
+    void givenBadActiveCsv_whenRead_thenParseNull() {
         String csv = "name,dateOfBirth,gender,role,email,phoneNumber,active\n" +
                 "Jake Smith,1995-05-10,MALE,Developer,jake@example.com,1234567890,maybe";
 

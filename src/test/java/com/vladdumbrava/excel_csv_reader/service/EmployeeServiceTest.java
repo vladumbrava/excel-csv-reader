@@ -66,7 +66,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void givenEmployee_WhenCreateEmployee_ReturnEmployee() {
+    public void givenEmployee_whenCreate_thenReturnEmployee() {
         when(employeeMapper.dtoToEntity(employeeDTO)).thenReturn(employee);
         when(employeeRepository.save(employee)).thenReturn(employee);
         when(employeeMapper.entityToDto(employee)).thenReturn(employeeDTO);
@@ -78,7 +78,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void whenGetAllEmployees_ReturnAllEmployees() {
+    public void whenGetAll_thenReturnEmployees() {
         when(employeeRepository.findAll()).thenReturn(List.of(employee));
         when(employeeMapper.entityToDto(employee)).thenReturn(employeeDTO);
 
@@ -89,14 +89,14 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void givenId_WhenDeleteEmployee_Delete() {
+    public void givenEmployeeId_whenDelete_thenDelete() {
         Long id = employee.getId();
         employeeService.deleteEmployee(id);
         verify(employeeRepository, times(1)).deleteById(id);
     }
 
     @Test
-    void testUpdateEmployee_whenFound() {
+    void givenExistingEmployee_whenUpdate_thenSaveUpdated() {
         Long id = employee.getId();
 
         when(employeeRepository.findById(id)).thenReturn(Optional.of(employee));
@@ -111,22 +111,22 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void testUpdateEmployee_whenNotFound() {
-        Long id = employee.getId();
+    void givenMissingEmployee_whenUpdate_thenThrowException() {
+        Long id = 99L;
 
         when(employeeRepository.findById(id)).thenReturn(Optional.empty());
         when(employeeMapper.dtoToEntity(employeeDTO)).thenReturn(employee);
-        when(employeeRepository.save(employee)).thenReturn(employee);
-        when(employeeMapper.entityToDto(employee)).thenReturn(employeeDTO);
 
-        EmployeeDTO result = employeeService.updateEmployee(id, employeeDTO);
+        assertThatThrownBy(() -> employeeService.updateEmployee(id, employeeDTO))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("Employee not found with id: " + id);
 
-        assertThat(result).isNotNull();
-        verify(employeeRepository, times(1)).save(employee);
+        verify(employeeRepository, never()).save(any());
+        verify(employeeMapper).dtoToEntity(employeeDTO);
+        verify(employeeMapper, never()).entityToDto(any());
     }
-
     @Test
-    void testUpdateEmployeeName_whenFound() {
+    void givenExistingEmployee_whenUpdateName_thenSaveUpdated() {
         Long id = employee.getId();
 
         when(employeeRepository.findById(id)).thenReturn(Optional.of(employee));
@@ -141,7 +141,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void testUpdateEmployeeName_whenNotFound() {
+    void givenMissingEmployee_whenUpdateName_thenThrowException() {
         Long id = employee.getId();
 
         when(employeeRepository.findById(id)).thenReturn(Optional.empty());
@@ -152,7 +152,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void testImportEmployees() {
+    void givenFileAndReader_whenImport_thenSaveParsedEmployees() {
         MultipartFile mockFile = mock(MultipartFile.class);
         EmployeeFileReader reader = mock(EmployeeFileReader.class);
 

@@ -20,8 +20,6 @@ public class EmployeeRepositoryTest {
 
     @Test
     public void givenEmployee_WhenSave_ReturnSavedEmployee() {
-
-        //Arrange
         Employee employee = new Employee();
         employee.setName("Example name");
         employee.setDateOfBirth(LocalDate.of(1999,2,6));
@@ -31,12 +29,9 @@ public class EmployeeRepositoryTest {
         employee.setPhoneNumber("+40623654789");
         employee.setActive(false);
 
-        //Act
         Employee savedEmployee = employeeRepository.save(employee);
 
-        //Assert
         Assertions.assertThat(savedEmployee).isNotNull();
         Assertions.assertThat(savedEmployee.getId()).isNotNull();
-
     }
 }
